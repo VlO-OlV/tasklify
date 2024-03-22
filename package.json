@@ -1,0 +1,10 @@
+{
+  "name": "React-App",
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "./api",
+    "./web"
+  ],
+  "license": "MIT"
+}

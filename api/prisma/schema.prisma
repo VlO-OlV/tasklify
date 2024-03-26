@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  deadline    DateTime?
+  list        List       @relation(fields: [listId], references: [id])
+  listId      String
+  priority    Priorities
+  createdAt   DateTime   @default(now())
+}
+
+model List {
+  id    String @id @default(uuid())
+  name  String @unique
+  tasks Task[]
+}
+
+enum Priorities {
+  LOW
+  MEDIUM
+  HIGH
+  EXTREME
+}

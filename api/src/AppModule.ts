@@ -1,11 +1,19 @@
 import { Module } from "@nestjs/common";
-import { TaskController } from "./api/controllers/TaskController";
-import { TaskService } from "./api/services/TaskService";
-import { ListController } from "./api/controllers/ListController";
-import { ListService } from "./api/services/ListService";
+import { ConfigModule } from "@nestjs/config";
+import { PrismaModule } from "./modules/PrismaModule";
+import { TaskModule } from "./modules/TaskModule";
+import { ListModule } from "./modules/ListModule";
+import Configuration from "./config/Configuration";
 
 @Module({
-    controllers: [TaskController, ListController],
-    providers: [TaskService, ListService],
+    imports: [
+        ConfigModule.forRoot({
+            envFilePath: ['.development.env', '.env'],
+            load: [Configuration],
+        }),
+        PrismaModule,
+        TaskModule,
+        ListModule,
+    ],
 })
 export class AppModule {}

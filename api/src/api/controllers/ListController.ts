@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/commo
 import { ListService } from "../services/ListService";
 import { CreateListDTO } from "../dtos/CreateListDTO";
 import { UpdateListDTO } from "../dtos/UpdateListDTO";
+import { ListByIdPipe } from "../pipes/ListByIdPipe";
 
 @Controller('/lists')
 export class ListController {
@@ -20,7 +21,7 @@ export class ListController {
 
     @Patch('/:id')
     async updateListById (
-        @Param('id') id: string,
+        @Param('id', ListByIdPipe) id: string,
         @Body() body: UpdateListDTO,
     ) {
         const updatedList = await this.listService.updateById(id, body);
@@ -29,7 +30,7 @@ export class ListController {
 
     @Delete('/:id')
     async deleteListById (
-        @Param('id') id: string,
+        @Param('id', ListByIdPipe) id: string,
     ) {
         const deletedList = await this.listService.deleteById(id);
         return deletedList;
@@ -37,7 +38,7 @@ export class ListController {
 
     @Get('/:id')
     async getListById (
-        @Param('id') id: string,
+        @Param('id', ListByIdPipe) id: string,
     ) {
         const list = await this.listService.getById(id);
         return list;

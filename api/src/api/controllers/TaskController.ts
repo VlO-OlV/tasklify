@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/commo
 import { CreateTaskDTO } from "../dtos/CreateTaskDTO";
 import { TaskService } from "../services/TaskService";
 import { UpdateTaskDTO } from "../dtos/UpdateTaskDTO";
+import { TaskByIdPipe } from "../pipes/TaskByIdPipe";
 
 @Controller('/tasks')
 export class TaskController {
@@ -20,7 +21,7 @@ export class TaskController {
 
     @Delete('/:id')
     async deleteTaskById (
-        @Param('id') id: string,
+        @Param('id', TaskByIdPipe) id: string,
     ) {
         const deletedTask = await this.taskService.deleteById(id);
         return deletedTask;
@@ -28,7 +29,7 @@ export class TaskController {
     
     @Patch('/:id')
     async updateTaskById (
-        @Param('id') id: string,
+        @Param('id', TaskByIdPipe) id: string,
         @Body() body: UpdateTaskDTO,
     ) {
         const updatedTask = await this.taskService.updateById(id, body);
@@ -37,7 +38,7 @@ export class TaskController {
 
     @Get('/:id')
     async getTaskById (
-        @Param('id') id: string,
+        @Param('id', TaskByIdPipe) id: string,
     ) {
         const task = await this.taskService.getById(id);
         return task;

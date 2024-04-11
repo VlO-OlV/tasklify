@@ -1,3 +1,5 @@
+import '../../assets/styles/Task.css';
+
 function Task(props: any) {
     return (
         <div className="task">
@@ -12,3 +14,5 @@ function Task(props: any) {
         </div>
     );
 }
+
+export default Task;

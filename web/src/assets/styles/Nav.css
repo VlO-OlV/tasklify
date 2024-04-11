@@ -1,0 +1,44 @@
+.nav {
+    position: relative;
+    width: 100%-60px;
+    height: 70px;
+    padding: 0px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Inter;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.buttons-block {
+    position: relative;
+    display: flex;
+    gap: 20px;
+}
+
+.button-history {
+    width: 120px;
+    height: 36px;
+    border: 2px solid #e1e1e6;
+    border-radius: 4px;
+    background: none;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.button-list {
+    width: 180px;
+    height: 36px;
+    border: none;
+    border-radius: 4px;
+    background: #5a647d;
+    font-family: Inter;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
+}

@@ -6,9 +6,11 @@ function App() {
   return (
     <div className="app">
       <Nav />
-      <div>
-        <List />
-      </div>
+      <main>
+        <div className="lists-block">
+          <List />
+        </div>
+      </main>
     </div>
   );
 }

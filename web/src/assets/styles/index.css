@@ -5,6 +5,12 @@ body {
     margin: 0;
 }
 
-button {
+/* Button */
+
+button, span {
     cursor: pointer;
+}
+
+h1, h2, h3, p {
+    margin: 0;
 }

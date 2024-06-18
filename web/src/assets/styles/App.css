@@ -1,3 +1,4 @@
 .lists-block {
+    display: flex;
     overflow-x: scroll;
 }

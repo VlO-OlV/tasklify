@@ -33,6 +33,11 @@
     font-family: Inter;
     font-size: 16px;
     font-weight: 500;
+    transition: 0.4s;
+}
+
+.button-history:hover {
+    border-radius: 8px;
 }
 
 .button-history::before {
@@ -60,6 +65,11 @@
     color: white;
     font-size: 16px;
     font-weight: 400;
+    transition: 0.4s;
+}
+
+.button-list:hover {
+    border-radius: 8px;
 }
 
 .button-list::before {

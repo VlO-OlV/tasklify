@@ -1,6 +1,7 @@
 .list {
     position: relative;
-    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
@@ -26,6 +27,78 @@
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.list-header_form input[type="text"] {
+    position: relative;
+    height: 85%;
+    width: 200px;
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 600;
+    outline: none;
+    border: none;
+}
+
+.list-header_form .form_button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    padding: 0px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 2px solid;
+    border-radius: 6px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: 0.6s;
+}
+
+.list-header_form .form_button::before {
+    content: "";
+    width: 30px;
+    height: 30px;
+    mask-size: 26px 26px;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    transition: 0.6s;
+}
+
+.list-header_form .button-cancel {
+    border-color: #e73f2e;
+}
+
+.list-header_form .button-cancel::before {
+    mask-image: url('../images/close.svg');
+    background-color: #e73f2e;
+}
+
+.list-header_form .button-cancel:hover {
+    background-color: #e73f2e;
+}
+
+.list-header_form .button-cancel:hover::before {
+    mask-image: url('../images/close.svg');
+    background-color: white;
+}
+
+.list-header_form .button-submit {
+    border-color: #00a50e;
+}
+
+.list-header_form .button-submit::before {
+    mask-image: url('../images/confirm.svg');
+    background-color: #00a50e;
+}
+
+.list-header_form .button-submit:hover {
+    background-color: #00a50e;
+}
+
+.list-header_form .button-submit:hover::before {
+    mask-image: url('../images/confirm.svg');
+    background-color: white;
 }
 
 .list-menu {
@@ -54,6 +127,12 @@
     font-family: Inter;
     font-size: 16px;
     font-weight: 500;
+    transition: 0.4s;
+}
+
+.list-add-task:hover {
+    background-color: #e1e1e6;
+    border-color: #5a647d;
 }
 
 .list-add-task::before {
@@ -65,4 +144,9 @@
     mask-position: center;
     mask-repeat: no-repeat;
     background-color: black;
+    transition: 0.6s;
+}
+
+.list-add-task:hover::before {
+    transform: rotate(180deg);
 }

@@ -7,6 +7,12 @@
     gap: 10px;
     border-radius: 10px;
     border: 2px solid #bcc1ca;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.task:hover {
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.3);
 }
 
 .task-header {
@@ -86,12 +92,23 @@
 
 .task-dropdown-button {
     position: relative;
-    padding: 8px 10px;
+    width: 100%-16px;
+    height: 40px;
+    padding: 6px 8px;
     border-radius: 6px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    border: none;
+    font-family: Inter;
     font-weight: 500;
+    font-size: 16px;
     background-color: #e1e1e6;
+    transition: 0.4s;
+}
+
+.task-dropdown-button:hover {
+    background-color: #bcc1ca;
 }
 
 .task-dropdown-button::after {
@@ -103,8 +120,42 @@
     mask-position: center;
     mask-repeat: no-repeat;
     background-color: black;
+    transition: 0.6s;
+}
+
+.task-dropdown-button_active {
+    border-radius: 6px 6px 0px 0px;
+    transition: 0.4s;
+}
+
+.task-dropdown-button_active::after {
+    transform: rotate(180deg);
 }
 
 .task-dropdown-content {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.task-dropdown-content-button {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    border: none;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 16px;
+    background-color: #f0f0f5;
+    transition: 0.4s;
+}
+
+.lastList {
+    border-radius: 0px 0px 6px 6px;
+}
+
+.task-dropdown-content-button:hover {
+    background-color: #e1e1e6;
 }

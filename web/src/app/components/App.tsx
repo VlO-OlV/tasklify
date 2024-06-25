@@ -1,13 +1,17 @@
-import List from './List';
+import ListBlock from './ListBlock';
 import Nav from './Nav';
 import '../../assets/styles/App.css';
 import Modal from './Modal';
 import React, { useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { List, createList, deleteListById, updateListById } from '../slices/listsSlice';
 
 function App() {
+  const lists: List[] = useAppSelector((state) => state.lists.lists);
+  const dispatch = useAppDispatch();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalMode, setModalMode] = useState(1);
-  const [lists, setLists] = useState([{name: "First"}, {name: "Second"}, {name: "Third"}]);
 
   function openModal(mode: number) {
     setModalMode(mode);
@@ -15,11 +19,19 @@ function App() {
   }
 
   function addList() {
-    setLists(lists.concat([{name: "New list"}]));
+    dispatch(createList("New List"));
   }
 
-  function renderLists(lists: any[]): React.ReactElement[] {
-    const listComponents = lists.map((list) => <List name={list.name} openModal={openModal}/>);
+  function deleteList(listId: string) {
+    dispatch(deleteListById(listId));
+  }
+
+  function updateList(listData: List) {
+    dispatch(updateListById(listData));
+  }
+
+  function renderLists(lists: List[]): React.ReactElement[] {
+    const listComponents = lists.map((list) => <ListBlock data={list} openModal={openModal} deleteList={deleteList}/>);
     return listComponents;
   }
 

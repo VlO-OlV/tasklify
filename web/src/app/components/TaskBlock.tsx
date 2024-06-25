@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../../assets/styles/Task.css';
 import Menu from './Menu';
 
-function Task(props: any) {
+function TaskBlock(props: any) {
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
     const [isVisibleOptions, setIsVisibleOptions] = useState(false);
 
@@ -33,4 +33,4 @@ function Task(props: any) {
     );
 }
 
-export default Task;
+export default TaskBlock;

@@ -4,26 +4,45 @@ import Menu from "./Menu";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { Task } from "../slices/tasksSlice";
-import { updateListById } from "../slices/listsSlice";
+import { deleteListById, updateListById } from "../slices/listsSlice";
+import Modal from "./Modal";
 
 function ListBlock(props: any) {
-    const tasks: Task[] = useAppSelector((state) => state.tasks.tasks).filter((task: Task) => task);
+    const tasks: Task[] = useAppSelector((state) => state.tasks.tasks).filter((task: Task) => task.listId === props.data.id);
     const dispatch = useAppDispatch();
 
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEditingMode, setIsEditingMode] = useState(false);
     const [currentName, setCurrentName] = useState(props.data.name);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalMode, setModalMode] = useState(1);
+    const [viewedTask, setViewedTask] = useState({});
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    function updateListName(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         dispatch(updateListById({id: props.data.id, name: currentName, numberOfTasks: props.data.numberOfTasks}));
+        setIsEditingMode(false);
+    }
+
+    function openModal(mode: number) {
+        setModalMode(mode);
+        setIsModalVisible(true);
+    }
+
+    function deleteList(listId: string) {
+        dispatch(deleteListById(listId));
+    }
+
+    function renderTasks(tasks: Task[]): React.ReactElement[] {
+        const taskBlocks = tasks.map((task) => <TaskBlock data={task} openModal={openModal} toggleTask={() => {setViewedTask(task);}} />);
+        return taskBlocks;
     }
 
     return (
         <div className="list">
             {
                 isEditingMode ?
-                    <form action="" className="list-header list-header_form" onSubmit={(e) => {handleSubmit(e);}}>
+                    <form action="" className="list-header list-header_form" onSubmit={(e) => {updateListName(e);}}>
                         <input type="text" name="name" placeholder="List name" defaultValue={props.data.name} onChange={(e) => {setCurrentName(e.target.value);}} />
                         <div>
                             <button type="button" className="form_button button-cancel" onClick={() => {setIsEditingMode(false);}}></button>
@@ -39,12 +58,10 @@ function ListBlock(props: any) {
                         </div>
                     </div>
             }
-            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} deleteList={() => {props.deleteList(props.data.id);}}/>
-            <button className="list-add-task" onClick={() => {props.openModal(3);}}>Add new card</button>
-            <TaskBlock name={"First"} description={"Lorem ipsum dolor sit amet"} deadline={"Mon, 1 April"} priority={"Low"} openModal={props.openModal} />
-            <TaskBlock name={"Second"} description={"Lorem ipsum dolor sit amet"} deadline={"Tue, 23 June"} priority={"Extreme"} openModal={props.openModal} />
-            <TaskBlock name={"Third"} description={"Lorem ipsum dolor sit amet"} deadline={"Fri, 11 November"} priority={"Medium"} openModal={props.openModal} />
-            <TaskBlock name={"Fourth"} description={"Lorem ipsum dolor sit amet"} deadline={"Sun, 31 December"} priority={"High"} openModal={props.openModal} />
+            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} deleteList={() => {deleteList(props.data.id);}}/>
+            <button className="list-add-task" onClick={() => {openModal(3);}}>Add new card</button>
+            {renderTasks(tasks)}
+            { isModalVisible ? <Modal closeModal={() => {setIsModalVisible(false);}} changeMode={(mode: number) => {setModalMode(mode);}} mode={modalMode} listId={props.data.id} data={viewedTask} /> : null }
         </div>
     );
 }

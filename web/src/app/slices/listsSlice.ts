@@ -24,20 +24,26 @@ export const listsSlice = createSlice({
             for (let i: number = 0; i < 10; i++) {
                 listId += symbols[Math.floor(Math.random() * symbols.length)];
             }
-            const newList: List = { id: listId, name: action.payload, numberOfTasks: 0 };
+            const newList: List = {
+                id: listId,
+                name: action.payload,
+                numberOfTasks: 0
+            };
             state.lists.push(newList);
         },
 
         deleteListById: (state, action: PayloadAction<string>) => {
-            state.lists.filter((list) => list.id != action.payload);
+            state.lists.filter((list) => list.id !== action.payload);
         },
 
         updateListById: (state, action: PayloadAction<List>) => {
-            state.lists.map((list) => {
-                if (list.id == action.payload.id) {
-                    list = action.payload;
+            for (let i = 0; i < state.lists.length; i++) {
+                if (state.lists[i].id === action.payload.id) {
+                    state.lists[i] = {
+                        ...action.payload
+                    }
                 }
-            });
+            }
         },
     },
 });

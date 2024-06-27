@@ -1,13 +1,54 @@
 import { useState } from 'react';
 import '../../assets/styles/Modal.css';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import { CreateTask, Task, createTask, updateTaskById } from '../slices/tasksSlice';
+import { List, updateListById } from '../slices/listsSlice';
 
 function Modal(props: any) {
+    const currentList: List = useAppSelector((state) => state.lists.lists).find((list) => list.id === props.listId) as List;
+    const dispatch = useAppDispatch();
+
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
-    const [priorityOption, setPriorityOption] = useState("High");
+
+    const [taskTitle, setTaskTitle] = useState(props.mode === 2 ? props.data.name : "");
+    const [taskDeadline, setTaskDeadline] = useState(props.mode === 2 ? props.data.deadline : "");
+    const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : "Low");
+    const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : "")
 
     function changePriority(event: any) {
-        setPriorityOption(event.target.value);
+        setTaskPriority(event.target.value);
         setIsVisibleDropdown(false);
+    }
+
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (props.mode === 2) {
+            const updatedTask: Task = {
+                id: props.data.id,
+                name: taskTitle,
+                description: taskDecription,
+                deadline: taskDeadline,
+                listId: props.listId,
+                priority: taskPriority,
+                createdAt: new Date(),
+            };
+            dispatch(updateTaskById(updatedTask));
+        } else {
+            const newTask: CreateTask = {
+                name: taskTitle,
+                description: taskDecription,
+                deadline: taskDeadline,
+                listId: props.listId,
+                priority: taskPriority,
+                createdAt: new Date(),
+            };
+            dispatch(createTask(newTask));
+            dispatch(updateListById({
+                ...currentList,
+                numberOfTasks: currentList.numberOfTasks+1,
+            }));
+        }
+        props.closeModal();
     }
 
     return (
@@ -20,32 +61,32 @@ function Modal(props: any) {
                     props.mode === 1 ? 
                         <div className="modal-body">
                             <div className="modal-body-header">
-                                <h2 className="body-header_title">Task name</h2>
+                                <h2 className="body-header_title">{props.data.name}</h2>
                                 <button className="body-header_button button-edit" onClick={() => {props.changeMode(2);}}>Edit task</button>
                             </div>
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <span className="status_label">Status</span>
-                                    <p>In progress</p>
+                                    <p>{currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <span className="deadline_label">Due date</span>
-                                    <p>Wed, 29 April</p>
+                                    <p>{props.data.deadline}</p>
                                 </div>
                                 <div className="info_block">
                                     <span className="priority_label">Priority</span>
-                                    <p>Low</p>
+                                    <p>{props.data.priority}</p>
                                 </div>
                             </div>
                             <div className="modal-body-description">
                                 <h3>Description</h3>
-                                <p>Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet</p>
+                                <p>{props.data.description}</p>
                             </div>
                         </div>
                     : 
-                        <form action='' method='post' className="modal-body">
+                        <form action='' className="modal-body" onSubmit={(e) => {handleSubmit(e);}}>
                             <div className="modal-body-header">
-                                <h2 className="body-header_title">Task name</h2>
+                                <input type="text" name="title" placeholder="Task title" defaultValue={props.mode === 2 ? props.data.name : ""} className="title_input" onChange={(e) => {setTaskTitle(e.target.value);}} />
                                 {
                                     props.mode === 2 ?
                                         <button className="body-header_button button-cancel" onClick={() => {props.changeMode(1);}}>Cancel</button>
@@ -56,23 +97,23 @@ function Modal(props: any) {
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <label className="status_label">Status</label>
-                                    <p>In progress</p>
+                                    <p>{currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="deadline" className="deadline_label">Due date</label>
-                                    <input type="datetime-local" name="deadline"/>
+                                    <input type="datetime-local" name="deadline" className="deadline_input" defaultValue={props.mode === 2 ? props.data.deadline : ""} onChange={(e) => {setTaskDeadline(e.target.value);}}/>
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="priority" className="priority_label">Priority</label>
                                     <div className="priority_select">
-                                        <select value={priorityOption} name="priority">
+                                        <select value={taskPriority} name="priority">
                                             <option value="Low">Low</option>
                                             <option value="Medium">Medium</option>
                                             <option value="High">High</option>
                                             <option value="Extreme">Extreme</option>
                                         </select>
                                         <div className="select_input">
-                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{priorityOption}</button>
+                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{taskPriority}</button>
                                             {
                                                 isVisibleDropdown ?
                                                     <div className="select_input_options">
@@ -90,7 +131,7 @@ function Modal(props: any) {
                             </div>
                             <div className="modal-body-description">
                                 <h3>Description</h3>
-                                <textarea placeholder="Description to the task" name="description"></textarea>
+                                <textarea placeholder="Description to the task" name="description" defaultValue={props.mode === 2 ? props.data.description : ""} onChange={(e) => {setTaskDescription(e.target.value);}}></textarea>
                             </div>
                             {
                                 props.mode === 2 ?

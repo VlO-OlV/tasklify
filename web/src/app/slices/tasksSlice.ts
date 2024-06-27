@@ -37,23 +37,28 @@ const tasksSlice = createSlice({
             for (let i: number = 0; i < 10; i++) {
                 taskId += symbols[Math.floor(Math.random() * symbols.length)];
             }
-            const newTask: Task = {id: taskId, ...action.payload};
+            const newTask: Task = {
+                id: taskId,
+                ...action.payload
+            };
             state.tasks.push(newTask);
         },
 
-        removeTask: (state, action: PayloadAction<string>) => {
-            state.tasks.filter((task) => task.id != action.payload);
+        deleteTaskById: (state, action: PayloadAction<string>) => {
+            state.tasks.filter((task) => task.id !== action.payload);
         },
 
-        updateTask: (state, action: PayloadAction<Task>) => {
-            state.tasks.map((task) => {
-                if (task.id == action.payload.id) {
-                    task = action.payload;
+        updateTaskById: (state, action: PayloadAction<Task>) => {
+            for (let i = 0; i < state.tasks.length; i++) {
+                if (state.tasks[i].id === action.payload.id) {
+                    state.tasks[i] = {
+                        ...action.payload
+                    }
                 }
-            });
+            }
         },
     },
 });
 
-export const {createTask, removeTask, updateTask} = tasksSlice.actions;
+export const {createTask, deleteTaskById, updateTaskById} = tasksSlice.actions;
 export const tasksReducer = tasksSlice.reducer;

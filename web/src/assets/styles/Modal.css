@@ -1,6 +1,7 @@
 .modal-wrapper {
     position: fixed;
     top: 0px;
+    left: 0px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -183,6 +184,24 @@
 }
 
 /* Form */
+
+.title_input {
+    position: relative;
+    width: 300px;
+    height: 36px;
+    outline: none;
+    border: 2px solid #e1e1e6;
+    border-radius: 4px;
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 600;
+    transition: 0.4s;
+}
+
+.title_input:focus {
+    border-radius: 6px;
+    border-color: #b5b8c9;
+}
 
 .priority_select select {
     display: none;

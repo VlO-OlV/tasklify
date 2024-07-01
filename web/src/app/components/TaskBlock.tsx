@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import '../../assets/styles/Task.css';
+import '../../public/styles/Task.css';
 import Menu from './Menu';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { List, updateListById } from '../slices/listsSlice';
-import { Task, deleteTaskById, updateTaskById } from '../slices/tasksSlice';
+import { List, updateListById } from '../store/slices/listsSlice';
+import { Task, deleteTaskById, updateTaskById } from '../store/slices/tasksSlice';
 
 function TaskBlock(props: any) {
     const lists: List[] = useAppSelector((state) => state.lists.lists);

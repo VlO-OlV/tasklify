@@ -1,4 +1,4 @@
-import '../../assets/styles/Nav.css';
+import '../../public/styles/Nav.css';
 
 function Nav(props: any) {
     return (

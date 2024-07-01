@@ -1,4 +1,4 @@
-import '../../assets/styles/Menu.css'
+import '../../public/styles/Menu.css'
 
 function Menu(props: any) {
     function handleEditClick() {

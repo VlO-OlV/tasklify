@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import '../../assets/styles/Modal.css';
+import '../../public/styles/Modal.css';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { CreateTask, Task, createTask, updateTaskById } from '../slices/tasksSlice';
-import { List, updateListById } from '../slices/listsSlice';
+import { CreateTask, Task, createTask, updateTaskById } from '../store/slices/tasksSlice';
+import { List, updateListById } from '../store/slices/listsSlice';
 
 function Modal(props: any) {
     const currentList: List = useAppSelector((state) => state.lists.lists).find((list) => list.id === props.listId) as List;

@@ -1,10 +1,10 @@
 import TaskBlock from "./TaskBlock";
-import '../../assets/styles/List.css';
+import '../../public/styles/List.css';
 import Menu from "./Menu";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { Task } from "../slices/tasksSlice";
-import { deleteListById, updateListById } from "../slices/listsSlice";
+import { Task } from "../store/slices/tasksSlice";
+import { deleteListById, updateListById } from "../store/slices/listsSlice";
 import Modal from "./Modal";
 
 function ListBlock(props: any) {

@@ -1,9 +1,9 @@
 import ListBlock from './ListBlock';
 import Nav from './Nav';
-import '../../assets/styles/App.css';
+import '../../public/styles/App.css';
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { List, createList } from '../slices/listsSlice';
+import { List, createList } from '../store/slices/listsSlice';
 
 function App() {
   const lists: List[] = useAppSelector((state) => state.lists.lists);

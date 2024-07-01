@@ -33,7 +33,7 @@ export const listsSlice = createSlice({
         },
 
         deleteListById: (state, action: PayloadAction<string>) => {
-            state.lists.filter((list) => list.id !== action.payload);
+            state.lists = state.lists.filter((list) => list.id !== action.payload);
         },
 
         updateListById: (state, action: PayloadAction<List>) => {

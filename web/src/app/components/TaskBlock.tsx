@@ -3,7 +3,7 @@ import '../../assets/styles/Task.css';
 import Menu from './Menu';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 import { List, updateListById } from '../slices/listsSlice';
-import { Task, updateTaskById } from '../slices/tasksSlice';
+import { Task, deleteTaskById, updateTaskById } from '../slices/tasksSlice';
 
 function TaskBlock(props: any) {
     const lists: List[] = useAppSelector((state) => state.lists.lists);
@@ -14,6 +14,16 @@ function TaskBlock(props: any) {
 
     function closeMenu() {
         setIsVisibleOptions(false);
+    }
+
+    function deleteTask(taskId: string) {
+        const taskList: List = lists.find((list) => list.id === props.data.listId) as List;
+        const updatedList: List = {
+            ...taskList,
+            numberOfTasks: taskList.numberOfTasks-1,
+        };
+        dispatch(updateListById(updatedList));
+        dispatch(deleteTaskById(props.data.id));
     }
 
     function moveTask(targetListId: string) {
@@ -54,7 +64,7 @@ function TaskBlock(props: any) {
                 <h3 className="task-title">{props.data.name}</h3>
                 <button className="task-menu" onClick={(e) => {e.stopPropagation(); setIsVisibleOptions(!isVisibleOptions)}}></button>
             </div>
-            <Menu isList={false} isOpened={isVisibleOptions} closeMenu={closeMenu} openModal={props.openModal}/>
+            <Menu isList={false} isOpened={isVisibleOptions} closeMenu={closeMenu} openModal={props.openModal} handleDelete={() => {deleteTask(props.data.id);}}/>
             <p className="task-description">{props.data.description}</p>
             <span className="task-deadline">{props.data.deadline}</span>
             <span className="task-priority">{props.data.priority}</span>

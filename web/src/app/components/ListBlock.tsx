@@ -29,10 +29,6 @@ function ListBlock(props: any) {
         setIsModalVisible(true);
     }
 
-    function deleteList(listId: string) {
-        dispatch(deleteListById(listId));
-    }
-
     function renderTasks(tasks: Task[]): React.ReactElement[] {
         const taskBlocks = tasks.map((task) => <TaskBlock data={task} openModal={openModal} toggleTask={() => {setViewedTask(task);}} />);
         return taskBlocks;
@@ -58,7 +54,7 @@ function ListBlock(props: any) {
                         </div>
                     </div>
             }
-            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} deleteList={() => {deleteList(props.data.id);}}/>
+            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} handleDelete={() => {dispatch(deleteListById(props.data.id));}}/>
             <button className="list-add-task" onClick={() => {openModal(3);}}>Add new card</button>
             {renderTasks(tasks)}
             { isModalVisible ? <Modal closeModal={() => {setIsModalVisible(false);}} changeMode={(mode: number) => {setModalMode(mode);}} mode={modalMode} listId={props.data.id} data={viewedTask} /> : null }

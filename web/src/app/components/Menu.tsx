@@ -11,11 +11,7 @@ function Menu(props: any) {
     }
 
     function handleDeleteClick() {
-        if (props.isList) {
-            props.deleteList();
-        } else {
-            //props.openModal(2);
-        }
+        props.handleDelete();
         props.closeMenu();
     }
 

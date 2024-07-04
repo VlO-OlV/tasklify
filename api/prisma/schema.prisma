@@ -20,7 +20,7 @@ model Task {
 
 model List {
   id    String @id @default(uuid())
-  name  String @unique
+  name  String
   tasks Task[]
 }
 

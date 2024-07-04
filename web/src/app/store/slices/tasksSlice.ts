@@ -1,23 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-export interface Task {
-    id: string,
-    name: string,
-    description: string,
-    deadline: Date,
-    listId: string,
-    priority: string,
-    createdAt: Date,
-}
-
-export interface CreateTask {
-    name: string,
-    description: string,
-    deadline: Date,
-    listId: string,
-    priority: string,
-    createdAt: Date,
-}
+import { CreateTask, Task } from "../../types/Task";
 
 interface TasksState {
     tasks: Task[],

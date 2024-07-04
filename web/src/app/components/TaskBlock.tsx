@@ -1,50 +1,38 @@
 import { useState } from 'react';
 import '../../public/styles/Task.css';
 import Menu from './Menu';
-import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { List, updateListById } from '../store/slices/listsSlice';
-import { Task, deleteTaskById, updateTaskById } from '../store/slices/tasksSlice';
+import { List } from '../types/List';
+import { Task } from '../types/Task';
+import { useDeleteTaskByIdMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
+import { useGetAllListsQuery } from '../store/api/endpoints/listsApi';
 
 function TaskBlock(props: any) {
-    const lists: List[] = useAppSelector((state) => state.lists.lists);
-    const dispatch = useAppDispatch();
+    const {data} = useGetAllListsQuery();
+    const [deleteTask] = useDeleteTaskByIdMutation();
+    const [updateTask] = useUpdateTaskByIdMutation();
+
+    const lists: List[] = data as List[];
 
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
     const [isVisibleOptions, setIsVisibleOptions] = useState(false);
 
-    function closeMenu() {
+    const closeMenu = () => {
         setIsVisibleOptions(false);
     }
 
-    function deleteTask(taskId: string) {
-        const taskList: List = lists.find((list) => list.id === props.data.listId) as List;
-        const updatedList: List = {
-            ...taskList,
-            numberOfTasks: taskList.numberOfTasks-1,
-        };
-        dispatch(updateListById(updatedList));
-        dispatch(deleteTaskById(props.data.id));
+    const removeTask = async (taskId: string) => {
+        await deleteTask({id: taskId}).unwrap();
     }
 
-    function moveTask(targetListId: string) {
+    const moveTask = async (targetListId: string) => {
         const updatedTask: Task = {
             ...props.data,
             listId: targetListId,
         };
-        const currentList: List = lists.find((list) => list.id === props.data.listId) as List;
-        const targetList: List = lists.find((list) => list.id === targetListId) as List;
-        dispatch(updateTaskById(updatedTask));
-        dispatch(updateListById({
-            ...currentList,
-            numberOfTasks: currentList.numberOfTasks-1,
-        }));
-        dispatch(updateListById({
-            ...targetList,
-            numberOfTasks: targetList.numberOfTasks+1,
-        }));
+        await updateTask(updatedTask).unwrap();
     }
 
-    function renderListOptions(lists: List[]): React.ReactElement[] {
+    const renderListOptions = (lists: List[]): React.ReactElement[] => {
         let listOptions = [];
         for (let i = 0; i < lists.length; i++) {
             if (lists[i].id !== props.data.listId) {
@@ -64,7 +52,7 @@ function TaskBlock(props: any) {
                 <h3 className="task-title">{props.data.name}</h3>
                 <button className="task-menu" onClick={(e) => {e.stopPropagation(); setIsVisibleOptions(!isVisibleOptions)}}></button>
             </div>
-            <Menu isList={false} isOpened={isVisibleOptions} closeMenu={closeMenu} openModal={props.openModal} handleDelete={() => {deleteTask(props.data.id);}}/>
+            <Menu isList={false} isOpened={isVisibleOptions} closeMenu={closeMenu} openModal={props.openModal} handleDelete={() => {removeTask(props.data.id);}}/>
             <p className="task-description">{props.data.description}</p>
             <span className="task-deadline">{props.data.deadline}</span>
             <span className="task-priority">{props.data.priority}</span>

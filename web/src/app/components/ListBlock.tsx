@@ -2,14 +2,17 @@ import TaskBlock from "./TaskBlock";
 import '../../public/styles/List.css';
 import Menu from "./Menu";
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
-import { Task } from "../store/slices/tasksSlice";
-import { deleteListById, updateListById } from "../store/slices/listsSlice";
 import Modal from "./Modal";
+import { Task } from "../types/Task";
+import { useGetAllTasksQuery } from "../store/api/endpoints/tasksApi";
+import { useDeleteListByIdMutation, useUpdateListByIdMutation } from "../store/api/endpoints/listsApi";
 
 function ListBlock(props: any) {
-    const tasks: Task[] = useAppSelector((state) => state.tasks.tasks).filter((task: Task) => task.listId === props.data.id);
-    const dispatch = useAppDispatch();
+    const {data, isFetching} = useGetAllTasksQuery();
+    const [updateList] = useUpdateListByIdMutation();
+    const [deleteList] = useDeleteListByIdMutation();
+
+    const tasks: Task[] = data as Task[];
 
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEditingMode, setIsEditingMode] = useState(false);
@@ -18,20 +21,24 @@ function ListBlock(props: any) {
     const [modalMode, setModalMode] = useState(1);
     const [viewedTask, setViewedTask] = useState({});
 
-    function updateListName(event: React.FormEvent<HTMLFormElement>) {
+    const updateListName = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        dispatch(updateListById({id: props.data.id, name: currentName, numberOfTasks: props.data.numberOfTasks}));
+        await updateList({id: props.data.id, name: currentName}).unwrap();
         setIsEditingMode(false);
     }
 
-    function openModal(mode: number) {
+    const openModal = (mode: number) => {
         setModalMode(mode);
         setIsModalVisible(true);
     }
 
-    function renderTasks(tasks: Task[]): React.ReactElement[] {
+    const renderTasks = (tasks: Task[]): React.ReactElement[] => {
         const taskBlocks = tasks.map((task) => <TaskBlock data={task} openModal={openModal} toggleTask={() => {setViewedTask(task);}} />);
         return taskBlocks;
+    }
+
+    const handleDelete = async (listId: string) => {
+        await deleteList({id: listId}).unwrap();
     }
 
     return (
@@ -49,14 +56,14 @@ function ListBlock(props: any) {
                     <div className="list-header">
                         <h3 className="list-title">{props.data.name}</h3>
                         <div>
-                            <p>{props.data.numberOfTasks}</p>
+                            <p>{!isFetching && tasks.length}</p>
                             <button className="list-menu" onClick={() => {setIsMenuVisible(!isMenuVisible)}}></button>
                         </div>
                     </div>
             }
-            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} handleDelete={() => {dispatch(deleteListById(props.data.id));}}/>
+            <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} handleDelete={() => {handleDelete(props.data.id);}}/>
             <button className="list-add-task" onClick={() => {openModal(3);}}>Add new card</button>
-            {renderTasks(tasks)}
+            {!isFetching && renderTasks(tasks)}
             { isModalVisible ? <Modal closeModal={() => {setIsModalVisible(false);}} changeMode={(mode: number) => {setModalMode(mode);}} mode={modalMode} listId={props.data.id} data={viewedTask} /> : null }
         </div>
     );

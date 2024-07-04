@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import '../../public/styles/Modal.css';
-import { useAppDispatch, useAppSelector } from '../hooks/hooks';
-import { CreateTask, Task, createTask, updateTaskById } from '../store/slices/tasksSlice';
-import { List, updateListById } from '../store/slices/listsSlice';
+import { List } from '../types/List';
+import { CreateTask, Task } from '../types/Task';
+import { Priority } from '../enums/PriorityEnum';
+import { useGetListByIdQuery } from '../store/api/endpoints/listsApi';
+import { useCreateTaskMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
 
 function Modal(props: any) {
-    const currentList: List = useAppSelector((state) => state.lists.lists).find((list) => list.id === props.listId) as List;
-    const dispatch = useAppDispatch();
+    const {data} = useGetListByIdQuery(props.listId);
+    const [updateTask] = useUpdateTaskByIdMutation();
+    const [createTask] = useCreateTaskMutation();
+
+    const currentList: List = data as List;
 
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
 
@@ -15,12 +20,12 @@ function Modal(props: any) {
     const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : "Low");
     const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : "")
 
-    function changePriority(event: any) {
+    const changePriority = (event: any) => {
         setTaskPriority(event.target.value);
         setIsVisibleDropdown(false);
     }
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (props.mode === 2) {
             const updatedTask: Task = {
@@ -32,7 +37,7 @@ function Modal(props: any) {
                 priority: taskPriority,
                 createdAt: new Date(),
             };
-            dispatch(updateTaskById(updatedTask));
+            await updateTask({...updatedTask}).unwrap();
         } else {
             const newTask: CreateTask = {
                 name: taskTitle,
@@ -42,11 +47,7 @@ function Modal(props: any) {
                 priority: taskPriority,
                 createdAt: new Date(),
             };
-            dispatch(createTask(newTask));
-            dispatch(updateListById({
-                ...currentList,
-                numberOfTasks: currentList.numberOfTasks+1,
-            }));
+            await createTask({...newTask}).unwrap();
         }
         props.closeModal();
     }
@@ -107,20 +108,20 @@ function Modal(props: any) {
                                     <label htmlFor="priority" className="priority_label">Priority</label>
                                     <div className="priority_select">
                                         <select value={taskPriority} name="priority">
-                                            <option value="Low">Low</option>
-                                            <option value="Medium">Medium</option>
-                                            <option value="High">High</option>
-                                            <option value="Extreme">Extreme</option>
+                                            <option value={Priority.LOW}>Low</option>
+                                            <option value={Priority.MEDIUM}>Medium</option>
+                                            <option value={Priority.HIGH}>High</option>
+                                            <option value={Priority.EXTREME}>Extreme</option>
                                         </select>
                                         <div className="select_input">
                                             <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{taskPriority}</button>
                                             {
                                                 isVisibleDropdown ?
                                                     <div className="select_input_options">
-                                                        <button type="button" value="Low" onClick={(e) => {changePriority(e);}}>Low</button>
-                                                        <button type="button" value="Medium" onClick={(e) => {changePriority(e);}}>Medium</button>
-                                                        <button type="button" value="High" onClick={(e) => {changePriority(e);}}>High</button>
-                                                        <button type="button" className="option_last" value="Extreme" onClick={(e) => {changePriority(e);}}>Extreme</button>
+                                                        <button type="button" value={Priority.LOW} onClick={(e) => {changePriority(e);}}>Low</button>
+                                                        <button type="button" value={Priority.MEDIUM} onClick={(e) => {changePriority(e);}}>Medium</button>
+                                                        <button type="button" value={Priority.HIGH} onClick={(e) => {changePriority(e);}}>High</button>
+                                                        <button type="button" className="option_last" value={Priority.EXTREME} onClick={(e) => {changePriority(e);}}>Extreme</button>
                                                     </div>
                                                 :
                                                     null

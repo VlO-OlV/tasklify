@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-export interface List {
-    id: string,
-    name: string,
-    numberOfTasks: number,
-}
+import { List } from "../../types/List";
 
 interface ListsState {
     lists: List[],
@@ -27,7 +22,6 @@ export const listsSlice = createSlice({
             const newList: List = {
                 id: listId,
                 name: action.payload,
-                numberOfTasks: 0
             };
             state.lists.push(newList);
         },

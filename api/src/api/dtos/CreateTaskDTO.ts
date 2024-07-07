@@ -1,4 +1,5 @@
 import { Priorities } from "@prisma/client";
+import { Type } from "class-transformer";
 import { IsEnum, IsNotEmpty, IsOptional, IsUUID, MaxLength, MinDate, MinLength } from "class-validator";
 
 export class CreateTaskDTO {
@@ -11,6 +12,7 @@ export class CreateTaskDTO {
     description?: string;
 
     @MinDate(new Date(), {message: 'Invalid date for he deadline'})
+    @Type(() => Date)
     @IsOptional()
     deadline?: Date;
 

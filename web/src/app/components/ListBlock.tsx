@@ -8,11 +8,12 @@ import { useGetAllTasksQuery } from "../store/api/endpoints/tasksApi";
 import { useDeleteListByIdMutation, useUpdateListByIdMutation } from "../store/api/endpoints/listsApi";
 
 function ListBlock(props: any) {
-    const {data, isFetching} = useGetAllTasksQuery();
+    const {data, isFetching, refetch: refetchTasks} = useGetAllTasksQuery();
+    
     const [updateList] = useUpdateListByIdMutation();
     const [deleteList] = useDeleteListByIdMutation();
 
-    const tasks: Task[] = data as Task[];
+    const tasks: Task[] = data?.filter((task: Task) => task.listId === props.data.id) as Task[];
 
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEditingMode, setIsEditingMode] = useState(false);
@@ -23,7 +24,11 @@ function ListBlock(props: any) {
 
     const updateListName = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        await updateList({id: props.data.id, name: currentName}).unwrap();
+        await updateList({id: props.data.id, name: currentName})
+                .unwrap()
+                .then(() => {
+                    props.refetchLists();
+                });
         setIsEditingMode(false);
     }
 
@@ -33,12 +38,16 @@ function ListBlock(props: any) {
     }
 
     const renderTasks = (tasks: Task[]): React.ReactElement[] => {
-        const taskBlocks = tasks.map((task) => <TaskBlock data={task} openModal={openModal} toggleTask={() => {setViewedTask(task);}} />);
+        const taskBlocks = tasks.map((task) => <TaskBlock data={task} openModal={openModal} toggleTask={() => {setViewedTask(task);}} refetchTasks={refetchTasks} />);
         return taskBlocks;
     }
 
     const handleDelete = async (listId: string) => {
-        await deleteList({id: listId}).unwrap();
+        await deleteList({id: listId})
+                .unwrap()
+                .then(() => {
+                    props.refetchLists();
+                });
     }
 
     return (
@@ -64,7 +73,7 @@ function ListBlock(props: any) {
             <Menu isList={true} enterEditMode={() => {setIsEditingMode(true)}} isOpened={isMenuVisible} closeMenu={() => {setIsMenuVisible(false);}} handleDelete={() => {handleDelete(props.data.id);}}/>
             <button className="list-add-task" onClick={() => {openModal(3);}}>Add new card</button>
             {!isFetching && renderTasks(tasks)}
-            { isModalVisible ? <Modal closeModal={() => {setIsModalVisible(false);}} changeMode={(mode: number) => {setModalMode(mode);}} mode={modalMode} listId={props.data.id} data={viewedTask} /> : null }
+            { isModalVisible ? <Modal closeModal={() => {setIsModalVisible(false);}} changeMode={(mode: number) => {setModalMode(mode);}} refetchTasks={refetchTasks} mode={modalMode} listId={props.data.id} data={viewedTask} /> : null }
         </div>
     );
 }

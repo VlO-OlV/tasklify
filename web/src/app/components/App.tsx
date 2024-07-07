@@ -6,18 +6,22 @@ import { List } from '../types/List';
 import { useCreateListMutation, useGetAllListsQuery } from '../store/api/endpoints/listsApi';
 
 function App() {
-  const {data, isFetching} = useGetAllListsQuery();
+  const {data, isFetching, refetch: refetchLists} = useGetAllListsQuery();
 
   const [createList] = useCreateListMutation();
 
   const lists: List[] = data as List[];
 
   const addList = async () => {
-    await createList({name: 'New list'}).unwrap();
+    await createList({name: 'New list'})
+            .unwrap()
+            .then(() => {
+              refetchLists();
+            });
   }
 
   function renderLists(lists: List[]): React.ReactElement[] {
-    const listBlocks = lists.map((list) => <ListBlock data={list}/>);
+    const listBlocks = lists.map((list) => <ListBlock data={list} refetchLists={refetchLists}/>);
     return listBlocks;
   }
 

@@ -7,7 +7,7 @@ import { useGetListByIdQuery } from '../store/api/endpoints/listsApi';
 import { useCreateTaskMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
 
 function Modal(props: any) {
-    const {data} = useGetListByIdQuery(props.listId);
+    const {data, isFetching} = useGetListByIdQuery(props.listId);
     const [updateTask] = useUpdateTaskByIdMutation();
     const [createTask] = useCreateTaskMutation();
 
@@ -16,7 +16,7 @@ function Modal(props: any) {
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
 
     const [taskTitle, setTaskTitle] = useState(props.mode === 2 ? props.data.name : "");
-    const [taskDeadline, setTaskDeadline] = useState(props.mode === 2 ? props.data.deadline : "");
+    const [taskDeadline, setTaskDeadline] = useState(props.mode === 2 ? props.data.deadline : null);
     const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : "Low");
     const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : "")
 
@@ -32,22 +32,30 @@ function Modal(props: any) {
                 id: props.data.id,
                 name: taskTitle,
                 description: taskDecription,
-                deadline: taskDeadline,
+                deadline: new Date(taskDeadline),
                 listId: props.listId,
                 priority: taskPriority,
                 createdAt: new Date(),
             };
-            await updateTask({...updatedTask}).unwrap();
+            await updateTask({...updatedTask})
+                    .unwrap()
+                    .then(() => {
+                        props.refetchTasks();
+                    });
         } else {
             const newTask: CreateTask = {
                 name: taskTitle,
                 description: taskDecription,
-                deadline: taskDeadline,
+                deadline: new Date(taskDeadline),
                 listId: props.listId,
                 priority: taskPriority,
                 createdAt: new Date(),
             };
-            await createTask({...newTask}).unwrap();
+            await createTask({...newTask})
+                    .unwrap()
+                    .then(() => {
+                        props.refetchTasks();
+                    });
         }
         props.closeModal();
     }
@@ -68,7 +76,7 @@ function Modal(props: any) {
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <span className="status_label">Status</span>
-                                    <p>{currentList.name}</p>
+                                    <p>{!isFetching && currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <span className="deadline_label">Due date</span>
@@ -98,7 +106,7 @@ function Modal(props: any) {
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <label className="status_label">Status</label>
-                                    <p>{currentList.name}</p>
+                                    <p>{!isFetching && currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="deadline" className="deadline_label">Due date</label>

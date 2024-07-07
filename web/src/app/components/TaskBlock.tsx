@@ -21,7 +21,11 @@ function TaskBlock(props: any) {
     }
 
     const removeTask = async (taskId: string) => {
-        await deleteTask({id: taskId}).unwrap();
+        await deleteTask({id: taskId})
+                .unwrap()
+                .then(() => {
+                    props.refetchTasks();
+                });
     }
 
     const moveTask = async (targetListId: string) => {
@@ -29,7 +33,11 @@ function TaskBlock(props: any) {
             ...props.data,
             listId: targetListId,
         };
-        await updateTask(updatedTask).unwrap();
+        await updateTask(updatedTask)
+                .unwrap()
+                .then(() => {
+                    props.refetchTasks();
+                });
     }
 
     const renderListOptions = (lists: List[]): React.ReactElement[] => {

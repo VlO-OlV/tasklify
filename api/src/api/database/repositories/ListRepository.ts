@@ -9,6 +9,10 @@ export class ListRepository {
         private prisma: PrismaService,
     ) {}
 
+    include = {
+        tasks: true,
+    }
+
     async create (
         data: Prisma.ListUncheckedCreateInput,
     ) {
@@ -46,6 +50,7 @@ export class ListRepository {
             where: {
                 id: id,
             },
+            include: this.include,
         });
     }
 

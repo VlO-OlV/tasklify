@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ListRepository } from "../database/repositories/ListRepository";
 import { Prisma } from "@prisma/client";
+import { ListIsNotEmptyException } from 'src/utils/exceptions/ListIsNotEmptyException';
 
 @Injectable()
 export class ListService {
@@ -27,6 +28,10 @@ export class ListService {
     async deleteById (
         id: string,
     ) {
+        const listToDelete = await this.listRepository.findById(id);
+        if (listToDelete.tasks.length !== 0) {
+            throw new ListIsNotEmptyException();
+        }
         const deletedList = await this.listRepository.deleteById(id);
         return deletedList;
     }

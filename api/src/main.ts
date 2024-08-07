@@ -2,8 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './AppModule';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { ValidationError } from 'class-validator';
-import { InvalidBodyException } from './utils/exceptions/InvalidBodyException';
+import { validationExceptionFactory } from './utils/ExceptionFactory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,13 +11,11 @@ async function bootstrap() {
 
   app.enableCors();
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('v2');
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      exceptionFactory: (errors: ValidationError[]) => {
-        return new InvalidBodyException();
-      }
+      exceptionFactory: validationExceptionFactory(),
     })
   );
 

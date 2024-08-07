@@ -5,20 +5,33 @@ import { CreateTask, Task } from '../types/Task';
 import { Priority } from '../enums/PriorityEnum';
 import { useGetListByIdQuery } from '../store/api/endpoints/listsApi';
 import { useCreateTaskMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
+import { useToastContext } from '../hooks/contexts/ToastContext';
+import getErrorMsg from '../utils/getErrorMsg';
 
 function Modal(props: any) {
-    const {data, isFetching} = useGetListByIdQuery(props.listId);
+    const {
+        data,
+        isFetching: isListFetching,
+        error: fetchListError,
+    } = useGetListByIdQuery(props.listId);
+
     const [updateTask] = useUpdateTaskByIdMutation();
     const [createTask] = useCreateTaskMutation();
 
+    const { showMessage } = useToastContext();
+
     const currentList: List = data as List;
+
+    if (fetchListError) {
+        showMessage(getErrorMsg(fetchListError));
+    }
 
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
 
-    const [taskTitle, setTaskTitle] = useState(props.mode === 2 ? props.data.name : "");
+    const [taskTitle, setTaskTitle] = useState(props.mode === 2 ? props.data.name : null);
     const [taskDeadline, setTaskDeadline] = useState(props.mode === 2 ? props.data.deadline : null);
-    const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : "Low");
-    const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : "")
+    const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : Priority.LOW);
+    const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : null);
 
     const changePriority = (event: any) => {
         setTaskPriority(event.target.value);
@@ -41,6 +54,10 @@ function Modal(props: any) {
                     .unwrap()
                     .then(() => {
                         props.refetchTasks();
+                        props.closeModal();
+                    })
+                    .catch((error) => {
+                        showMessage(getErrorMsg(error));
                     });
         } else {
             const newTask: CreateTask = {
@@ -55,9 +72,12 @@ function Modal(props: any) {
                     .unwrap()
                     .then(() => {
                         props.refetchTasks();
+                        props.closeModal();
+                    })
+                    .catch((error) => {
+                        showMessage(getErrorMsg(error));
                     });
         }
-        props.closeModal();
     }
 
     return (
@@ -76,7 +96,7 @@ function Modal(props: any) {
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <span className="status_label">Status</span>
-                                    <p>{!isFetching && currentList.name}</p>
+                                    <p>{!isListFetching && currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <span className="deadline_label">Due date</span>
@@ -106,7 +126,7 @@ function Modal(props: any) {
                             <div className="modal-body-info">
                                 <div className="info_block">
                                     <label className="status_label">Status</label>
-                                    <p>{!isFetching && currentList.name}</p>
+                                    <p>{!isListFetching && currentList.name}</p>
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="deadline" className="deadline_label">Due date</label>
@@ -142,12 +162,14 @@ function Modal(props: any) {
                                 <h3>Description</h3>
                                 <textarea placeholder="Description to the task" name="description" defaultValue={props.mode === 2 ? props.data.description : ""} onChange={(e) => {setTaskDescription(e.target.value);}}></textarea>
                             </div>
-                            {
-                                props.mode === 2 ?
-                                    <input className="form_button-submit" type="submit" value="Update" />
-                                :
-                                    <input className="form_button-submit" type="submit" value="Create" />
-                            }
+                            <div className="modal-body-submit">
+                                {
+                                    props.mode === 2 ?
+                                        <input className="form_button-submit" type="submit" value="Update" />
+                                    :
+                                        <input className="form_button-submit" type="submit" value="Create" />
+                                }
+                            </div>
                         </form>
                 }
             </div>

@@ -11,7 +11,6 @@ export class UpdateTaskDTO {
     @IsOptional()
     description?: string;
 
-    @MinDate(new Date(), {message: 'Invalid date for he deadline'})
     @Type(() => Date)
     @IsOptional()
     deadline?: Date;

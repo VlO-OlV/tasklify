@@ -4,20 +4,36 @@ import '../../public/styles/App.css';
 import React from 'react';
 import { List } from '../types/List';
 import { useCreateListMutation, useGetAllListsQuery } from '../store/api/endpoints/listsApi';
+import Toast from './Toast';
+import { useToastContext } from '../hooks/contexts/ToastContext';
+import getErrorMsg from '../utils/getErrorMsg';
 
 function App() {
-  const {data, isFetching, refetch: refetchLists} = useGetAllListsQuery();
+  const { 
+    data,
+    isFetching: isListsFetching,
+    refetch: refetchLists,
+    error: fetchListsError,
+  } = useGetAllListsQuery();
 
-  const [createList] = useCreateListMutation();
+  const [ createList ] = useCreateListMutation();
+  const { showMessage } = useToastContext();
 
   const lists: List[] = data as List[];
 
+  if (fetchListsError) {
+    showMessage(getErrorMsg(fetchListsError));
+  }
+
   const addList = async () => {
-    await createList({name: 'New list'})
-            .unwrap()
-            .then(() => {
-              refetchLists();
-            });
+    createList({name: 'New List'})
+      .unwrap()
+      .then(() => {
+        refetchLists();
+      })
+      .catch((error) => {
+        showMessage(getErrorMsg(error));
+      });
   }
 
   function renderLists(lists: List[]): React.ReactElement[] {
@@ -26,14 +42,15 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <>
       <Nav addList={addList}/>
       <main>
         <div className="lists-block">
-          {!isFetching && renderLists(lists)}
+          {!isListsFetching && renderLists(lists)}
         </div>
       </main>
-    </div>
+      <Toast />
+    </>
   );
 }
 

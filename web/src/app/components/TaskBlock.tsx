@@ -5,13 +5,25 @@ import { List } from '../types/List';
 import { Task } from '../types/Task';
 import { useDeleteTaskByIdMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
 import { useGetAllListsQuery } from '../store/api/endpoints/listsApi';
+import { useToastContext } from '../hooks/contexts/ToastContext';
+import getErrorMsg from '../utils/getErrorMsg';
 
 function TaskBlock(props: any) {
-    const {data} = useGetAllListsQuery();
+    const {
+        data,
+        error: fetchListsError,
+    } = useGetAllListsQuery();
+
     const [deleteTask] = useDeleteTaskByIdMutation();
     const [updateTask] = useUpdateTaskByIdMutation();
 
+    const { showMessage } = useToastContext();
+
     const lists: List[] = data as List[];
+
+    if (fetchListsError) {
+        showMessage(getErrorMsg(fetchListsError));
+    }
 
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
     const [isVisibleOptions, setIsVisibleOptions] = useState(false);
@@ -25,6 +37,9 @@ function TaskBlock(props: any) {
                 .unwrap()
                 .then(() => {
                     props.refetchTasks();
+                })
+                .catch((error) => {
+                    showMessage(getErrorMsg(error));
                 });
     }
 
@@ -37,6 +52,9 @@ function TaskBlock(props: any) {
                 .unwrap()
                 .then(() => {
                     props.refetchTasks();
+                })
+                .catch((error) => {
+                    showMessage(getErrorMsg(error));
                 });
     }
 

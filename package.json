@@ -2,9 +2,10 @@
   "name": "React-App",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "workspaces": [
-    "./api",
-    "./web"
+    "api",
+    "web"
   ],
   "license": "MIT"
 }

@@ -7,13 +7,32 @@ import { useGetListByIdQuery } from '../store/api/endpoints/listsApi';
 import { useCreateTaskMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
 import { useToastContext } from '../hooks/contexts/ToastContext';
 import getErrorMsg from '../utils/getErrorMsg';
+import getDateString from '../utils/getDateString';
+import { formatPriority } from '../utils/formatPriority';
 
-function Modal(props: any) {
+interface ModalProps {
+    listId: string,
+    taskData: Task,
+    mode: number,
+    refetchTasks: () => void,
+    closeModal: () => void,
+    changeMode: (mode: number) => void,
+}
+
+function Modal({
+    listId,
+    taskData,
+    mode,
+    refetchTasks,
+    closeModal,
+    changeMode
+}: ModalProps) {
+    
     const {
         data,
         isFetching: isListFetching,
         error: fetchListError,
-    } = useGetListByIdQuery(props.listId);
+    } = useGetListByIdQuery(listId);
 
     const [updateTask] = useUpdateTaskByIdMutation();
     const [createTask] = useCreateTaskMutation();
@@ -28,10 +47,10 @@ function Modal(props: any) {
 
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
 
-    const [taskTitle, setTaskTitle] = useState(props.mode === 2 ? props.data.name : null);
-    const [taskDeadline, setTaskDeadline] = useState(props.mode === 2 ? props.data.deadline : null);
-    const [taskPriority, setTaskPriority] = useState(props.mode === 2 ? props.data.priority : Priority.LOW);
-    const [taskDecription, setTaskDescription] = useState(props.mode === 2 ? props.data.description : null);
+    const [taskTitle, setTaskTitle] = useState(mode !== 3 ? taskData.name : null);
+    const [taskDeadline, setTaskDeadline] = useState(mode !== 3 ? taskData.deadline : null);
+    const [taskPriority, setTaskPriority] = useState(mode !== 3 ? taskData.priority : Priority.LOW);
+    const [taskDecription, setTaskDescription] = useState(mode !== 3 ? taskData.description : null);
 
     const changePriority = (event: any) => {
         setTaskPriority(event.target.value);
@@ -40,39 +59,40 @@ function Modal(props: any) {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (props.mode === 2) {
+        if (mode === 2) {
             const updatedTask: Task = {
-                id: props.data.id,
-                name: taskTitle,
-                description: taskDecription,
-                deadline: new Date(taskDeadline),
-                listId: props.listId,
-                priority: taskPriority,
+                id: taskData.id,
+                name: taskTitle as any,
+                description: taskDecription as any,
+                deadline: taskDeadline as any,
+                listId: listId,
+                priority: taskPriority as any,
                 createdAt: new Date(),
             };
+            console.log(taskTitle as any);
             await updateTask({...updatedTask})
                     .unwrap()
                     .then(() => {
-                        props.refetchTasks();
-                        props.closeModal();
+                        refetchTasks();
+                        closeModal();
                     })
                     .catch((error) => {
                         showMessage(getErrorMsg(error));
                     });
         } else {
             const newTask: CreateTask = {
-                name: taskTitle,
-                description: taskDecription,
-                deadline: new Date(taskDeadline),
-                listId: props.listId,
-                priority: taskPriority,
+                name: taskTitle as any,
+                description: taskDecription as any,
+                deadline: taskDeadline as any,
+                listId: listId,
+                priority: taskPriority as any,
                 createdAt: new Date(),
             };
             await createTask({...newTask})
                     .unwrap()
                     .then(() => {
-                        props.refetchTasks();
-                        props.closeModal();
+                        refetchTasks();
+                        closeModal();
                     })
                     .catch((error) => {
                         showMessage(getErrorMsg(error));
@@ -84,14 +104,14 @@ function Modal(props: any) {
         <div className="modal-wrapper">
             <div className="modal">
                 <div className="modal-header">
-                    <button className="modal-close" onClick={props.closeModal}></button>
+                    <button className="modal-close" onClick={closeModal}></button>
                 </div>
                 {
-                    props.mode === 1 ? 
+                    mode === 1 ? 
                         <div className="modal-body">
                             <div className="modal-body-header">
-                                <h2 className="body-header_title">{props.data.name}</h2>
-                                <button className="body-header_button button-edit" onClick={() => {props.changeMode(2);}}>Edit task</button>
+                                <h2 className="body-header_title">{taskData.name}</h2>
+                                <button className="body-header_button button-edit" onClick={() => {changeMode(2);}}>Edit task</button>
                             </div>
                             <div className="modal-body-info">
                                 <div className="info_block">
@@ -100,25 +120,25 @@ function Modal(props: any) {
                                 </div>
                                 <div className="info_block">
                                     <span className="deadline_label">Due date</span>
-                                    <p>{props.data.deadline}</p>
+                                    <p>{taskData.deadline ? getDateString(new Date(taskData.deadline)) : 'No deadline'}</p>
                                 </div>
                                 <div className="info_block">
                                     <span className="priority_label">Priority</span>
-                                    <p>{props.data.priority}</p>
+                                    <p>{formatPriority(taskData.priority)}</p>
                                 </div>
                             </div>
                             <div className="modal-body-description">
                                 <h3>Description</h3>
-                                <p>{props.data.description}</p>
+                                <p>{taskData.description}</p>
                             </div>
                         </div>
                     : 
                         <form action='' className="modal-body" onSubmit={(e) => {handleSubmit(e);}}>
                             <div className="modal-body-header">
-                                <input type="text" name="title" placeholder="Task title" defaultValue={props.mode === 2 ? props.data.name : ""} className="title_input" onChange={(e) => {setTaskTitle(e.target.value);}} />
+                                <input type="text" name="title" placeholder="Task title" defaultValue={mode === 2 ? taskData.name : ""} className="title_input" onChange={(e) => {setTaskTitle(e.target.value);}} />
                                 {
-                                    props.mode === 2 ?
-                                        <button className="body-header_button button-cancel" onClick={() => {props.changeMode(1);}}>Cancel</button>
+                                    mode === 2 ?
+                                        <button className="body-header_button button-cancel" onClick={() => {changeMode(1);}}>Cancel</button>
                                     :
                                         null
                                 }
@@ -130,7 +150,7 @@ function Modal(props: any) {
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="deadline" className="deadline_label">Due date</label>
-                                    <input type="datetime-local" name="deadline" className="deadline_input" defaultValue={props.mode === 2 ? props.data.deadline : ""} onChange={(e) => {setTaskDeadline(e.target.value);}}/>
+                                    <input type="datetime-local" name="deadline" className="deadline_input" defaultValue={mode === 2 ? taskData.deadline ? getDateString(new Date(taskData.deadline)) : '' : ''} onChange={(e) => {setTaskDeadline(new Date(e.target.value));}}/>
                                 </div>
                                 <div className="info_block">
                                     <label htmlFor="priority" className="priority_label">Priority</label>
@@ -142,7 +162,7 @@ function Modal(props: any) {
                                             <option value={Priority.EXTREME}>Extreme</option>
                                         </select>
                                         <div className="select_input">
-                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{taskPriority}</button>
+                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{formatPriority(taskPriority)}</button>
                                             {
                                                 isVisibleDropdown ?
                                                     <div className="select_input_options">
@@ -160,11 +180,11 @@ function Modal(props: any) {
                             </div>
                             <div className="modal-body-description">
                                 <h3>Description</h3>
-                                <textarea placeholder="Description to the task" name="description" defaultValue={props.mode === 2 ? props.data.description : ""} onChange={(e) => {setTaskDescription(e.target.value);}}></textarea>
+                                <textarea placeholder="Description to the task" name="description" defaultValue={mode === 2 ? taskData.description : ""} onChange={(e) => {setTaskDescription(e.target.value);}}></textarea>
                             </div>
                             <div className="modal-body-submit">
                                 {
-                                    props.mode === 2 ?
+                                    mode === 2 ?
                                         <input className="form_button-submit" type="submit" value="Update" />
                                     :
                                         <input className="form_button-submit" type="submit" value="Create" />

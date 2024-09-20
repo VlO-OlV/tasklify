@@ -1,22 +1,37 @@
 import '../../public/styles/Menu.css'
 
-function Menu(props: any) {
+interface MenuProps {
+    enterEditMode?: () => void,
+    openModal?: (mode: number) => void,
+    handleDelete: () => void,
+    closeMenu: () => void,
+    isList: boolean,
+}
+
+function Menu({
+    enterEditMode = () => {},
+    openModal = () => {},
+    handleDelete,
+    closeMenu,
+    isList,
+}: MenuProps) {
+    
     function handleEditClick() {
-        if (props.isList) {
-            props.enterEditMode();
+        if (isList) {
+            enterEditMode();
         } else {
-            props.openModal(2);
+            openModal(2);
         }
-        props.closeMenu();
+        closeMenu();
     }
 
     function handleDeleteClick() {
-        props.handleDelete();
-        props.closeMenu();
+        handleDelete();
+        closeMenu();
     }
 
     return (
-        <div className={props.isList ? "menu menu-list" : "menu menu-task"} style={props.isOpened ? {display: 'flex'} : {display: 'none'}} onClick={(e) => {e.stopPropagation();}}>
+        <div className={isList ? "menu menu-list" : "menu menu-task"} onClick={(e) => {e.stopPropagation();}}>
             <button className="menu-button-edit" onClick={handleEditClick}>Edit</button>
             <button className="menu-button-delete" onClick={handleDeleteClick}>Delete</button>
         </div>

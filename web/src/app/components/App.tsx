@@ -37,7 +37,7 @@ function App() {
   }
 
   function renderLists(lists: List[]): React.ReactElement[] {
-    const listBlocks = lists.map((list) => <ListBlock data={list} refetchLists={refetchLists}/>);
+    const listBlocks = lists.map((list) => <ListBlock listData={list} refetchLists={refetchLists}/>);
     return listBlocks;
   }
 

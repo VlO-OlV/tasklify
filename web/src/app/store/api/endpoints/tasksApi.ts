@@ -6,7 +6,7 @@ export const tasksApi = baseApi.injectEndpoints({
         getAllTasks: builder.query<Task[], void>({
             query: () => ({
                 url: '/tasks',
-            })
+            }),
         }),
         getTaskById: builder.query<Task, string>({
             query: (id) => ({

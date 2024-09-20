@@ -7,8 +7,21 @@ import { useDeleteTaskByIdMutation, useUpdateTaskByIdMutation } from '../store/a
 import { useGetAllListsQuery } from '../store/api/endpoints/listsApi';
 import { useToastContext } from '../hooks/contexts/ToastContext';
 import getErrorMsg from '../utils/getErrorMsg';
+import getDateString from '../utils/getDateString';
+import { formatPriority } from '../utils/formatPriority';
 
-function TaskBlock(props: any) {
+interface TaskBlockProps {
+    refetchTasks: () => void,
+    taskData: Task,
+    openModal: (mode: number) => void,
+}
+
+function TaskBlock({
+    refetchTasks,
+    taskData,
+    openModal,
+}: TaskBlockProps) {
+
     const {
         data,
         error: fetchListsError,
@@ -36,7 +49,7 @@ function TaskBlock(props: any) {
         await deleteTask({id: taskId})
                 .unwrap()
                 .then(() => {
-                    props.refetchTasks();
+                    refetchTasks();
                 })
                 .catch((error) => {
                     showMessage(getErrorMsg(error));
@@ -45,13 +58,13 @@ function TaskBlock(props: any) {
 
     const moveTask = async (targetListId: string) => {
         const updatedTask: Task = {
-            ...props.data,
+            ...taskData,
             listId: targetListId,
         };
         await updateTask(updatedTask)
                 .unwrap()
                 .then(() => {
-                    props.refetchTasks();
+                    refetchTasks();
                 })
                 .catch((error) => {
                     showMessage(getErrorMsg(error));
@@ -61,7 +74,7 @@ function TaskBlock(props: any) {
     const renderListOptions = (lists: List[]): React.ReactElement[] => {
         let listOptions = [];
         for (let i = 0; i < lists.length; i++) {
-            if (lists[i].id !== props.data.listId) {
+            if (lists[i].id !== taskData.listId) {
                 if (i < lists.length-1) {
                     listOptions.push(<button className="task-dropdown-content-button" onClick={() => {moveTask(lists[i].id);}}>{lists[i].name}</button>)
                 } else {
@@ -73,15 +86,15 @@ function TaskBlock(props: any) {
     }
 
     return (
-        <div className="task" onClick={() => {props.openModal(1); props.toggleTask();}}>
+        <div className="task" onClick={() => {openModal(1);}}>
             <div className="task-header">
-                <h3 className="task-title">{props.data.name}</h3>
+                <h3 className="task-title">{taskData.name}</h3>
                 <button className="task-menu" onClick={(e) => {e.stopPropagation(); setIsVisibleOptions(!isVisibleOptions)}}></button>
             </div>
-            <Menu isList={false} isOpened={isVisibleOptions} closeMenu={closeMenu} openModal={props.openModal} handleDelete={() => {removeTask(props.data.id);}}/>
-            <p className="task-description">{props.data.description}</p>
-            <span className="task-deadline">{props.data.deadline}</span>
-            <span className="task-priority">{props.data.priority}</span>
+            { isVisibleOptions ? <Menu isList={false} closeMenu={closeMenu} openModal={openModal} handleDelete={() => {removeTask(taskData.id);}}/> : null }
+            <p className="task-description">{taskData.description}</p>
+            <span className="task-deadline">{taskData.deadline ? getDateString(new Date(taskData.deadline)) : 'No deadline'}</span>
+            <span className="task-priority">{formatPriority(taskData.priority)}</span>
             <div className="task-dropdown" onClick={(e) => {e.stopPropagation();}}>
                 <button className={ isVisibleDropdown ? "task-dropdown-button task-dropdown-button_active" : "task-dropdown-button"} onClick={ () => {setIsVisibleDropdown(!isVisibleDropdown)} }>Move to:</button>
                 { isVisibleDropdown ? 

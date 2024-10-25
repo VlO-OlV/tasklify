@@ -1,18 +1,19 @@
-import '../../public/styles/Nav.css';
+import '../../assets/styles/Nav.css';
 
 interface NavProps {
-    addList: () => void,
+  title?: string,
+  children?: any, 
 }
 
-function Nav({ addList }: NavProps) {
-    return (
-        <div className="nav">
-            <h1 className="title">My Task Board</h1>
-            <div className="buttons-block">
-                <button className="button-history">History</button>
-                <button className="button-list" onClick={addList}>Create new list</button>
-            </div>
-        </div>
-    );
+function Nav({ title, children }: NavProps) {
+  return (
+    <div className="nav">
+      <h1 className="title">{title ?? 'Tasklify'}</h1>
+      <div className="pages-block"></div>
+      <div className="buttons-block">
+        {children}
+      </div>
+    </div>
+  );
 }
 export default Nav;

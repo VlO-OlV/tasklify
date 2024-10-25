@@ -1,4 +1,4 @@
-import '../../public/styles/Menu.css'
+import '../../assets/styles/Menu.css'
 
 interface MenuProps {
     enterEditMode?: () => void,

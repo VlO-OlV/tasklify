@@ -23,6 +23,10 @@ export class UserRepository {
     });
   }
 
+  async deleteMany (where: Prisma.UserDeleteManyArgs) {
+    return this.prisma.user.deleteMany(where);
+  }
+
   async updateById (id: string, data: Prisma.UserUncheckedUpdateInput) {
     return this.prisma.user.update({
       where: { id },

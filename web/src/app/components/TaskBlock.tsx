@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../../public/styles/Task.css';
+import '../../assets/styles/Task.css';
 import Menu from './Menu';
 import { List } from '../types/List';
 import { Task } from '../types/Task';

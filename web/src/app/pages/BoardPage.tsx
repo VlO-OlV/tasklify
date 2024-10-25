@@ -1,14 +1,14 @@
-import ListBlock from './ListBlock';
-import Nav from './Nav';
-import '../../public/styles/App.css';
+import ListBlock from '../components/ListBlock';
+import Nav from '../components/Nav';
+import '../../assets/styles/BoardPage.css';
 import React from 'react';
 import { List } from '../types/List';
 import { useCreateListMutation, useGetAllListsQuery } from '../store/api/endpoints/listsApi';
-import Toast from './Toast';
+import Toast from '../components/Toast';
 import { useToastContext } from '../hooks/contexts/ToastContext';
 import getErrorMsg from '../utils/getErrorMsg';
 
-function App() {
+function BoardPage() {
   const { 
     data,
     isFetching: isListsFetching,
@@ -43,7 +43,10 @@ function App() {
 
   return (
     <>
-      <Nav addList={addList}/>
+      <Nav>
+        <button className="button button-history">History</button>
+        <button className="button button-list" onClick={addList}>Create new list</button>
+      </Nav>
       <main>
         <div className="lists-block">
           {!isListsFetching && renderLists(lists)}
@@ -54,4 +57,4 @@ function App() {
   );
 }
 
-export default App;
+export default BoardPage;

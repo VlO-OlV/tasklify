@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../../public/styles/Modal.css';
+import '../../assets/styles/Modal.css';
 import { List } from '../types/List';
 import { CreateTask, Task } from '../types/Task';
 import { Priority } from '../enums/PriorityEnum';

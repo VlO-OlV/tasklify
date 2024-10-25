@@ -1,0 +1,45 @@
+.success-block {
+  position: relative;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  justify-content: space-between;
+  text-align: center;
+  gap: 20px;
+  margin-top: 30px;
+  font-family: Inter;
+}
+
+.success-icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  background-image: url('../images/success.png');
+  background-size: 56px 56px;
+}
+
+.success-description {
+  font-weight: 400;
+  color: #5a647d;
+}
+
+.success-button {
+  position: relative;
+  width: 240px;
+  height: 40px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #5a647d;
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  transition: 0.4s;
+}
+
+.success-button:hover {
+  border-radius: 8px;
+}

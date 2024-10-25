@@ -4,4 +4,5 @@ export default () => ({
     jwt: {
         ttl: '86400s',
     },
+    frontBaseUrl: process.env.FRONT_BASE_URL,
 });

@@ -1,5 +1,5 @@
 import { useToastContext } from '../hooks/contexts/ToastContext';
-import '../../public/styles/Toast.css';
+import '../../assets/styles/Toast.css';
 
 function Toast () {
   const { message, clearMessage } = useToastContext();

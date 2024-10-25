@@ -1,5 +1,5 @@
 import TaskBlock from "./TaskBlock";
-import '../../public/styles/List.css';
+import '../../assets/styles/List.css';
 import Menu from "./Menu";
 import { useState } from "react";
 import Modal from "./Modal";

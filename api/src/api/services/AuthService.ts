@@ -8,6 +8,7 @@ import { RegistrationDTO } from '../dtos/RegistrationDTO';
 import { AlreadyRegisteredException } from 'src/utils/exceptions/AlreadyRegisteredException';
 import { EmailService } from './EmailService';
 import { NotVerifiedException } from 'src/utils/exceptions/NotVerifiedException';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private userRepository: UserRepository,
     private jwtService: JwtService,
     private emailService: EmailService,
+    private configService: ConfigService,
   ) {}
 
   private async checkPassword (password: string, hashedPassword: string) {
@@ -41,7 +43,7 @@ export class AuthService {
   async login (user: User) {
     const payload = { email: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
@@ -55,21 +57,43 @@ export class AuthService {
       password: await bcrypt.hash(body.password, await bcrypt.genSalt()),
     });
     await this.requestEmailVerification(body.email);
+
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.userRepository.find({ email: body.email })
+          .then((user) => {
+            if (!user.isVerified) {
+              resolve(
+                this.userRepository.deleteMany({
+                  where: {
+                    email: user.email,
+                  },
+                })
+              );
+            }
+            resolve(false);
+          })
+          .catch(reject);
+      }, 3600*1000);
+    });
   }
 
   async requestEmailVerification (email: string) {
     const userToVerify = await this.userRepository.find({ email });
+
+    const url = this.configService.get<string>('frontBaseUrl');
     await this.emailService.sendEmail({
       to: email,
       subject: 'Email verification',
-      message: 'Verify your email, please :)',
+      message: `Click here to verify --> ${url}/verifyEmail/${userToVerify.id}`,
     });
   }
 
   async verifyEmail (userId: string) {
-    return this.userRepository.updateById(userId, {
+    const { password, ...verifiedUser } = await this.userRepository.updateById(userId, {
       isVerified: true,
     });
+    return verifiedUser;
   }
 
   async getMe (userId: string) {

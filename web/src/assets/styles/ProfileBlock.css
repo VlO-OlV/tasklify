@@ -1,0 +1,98 @@
+.profile-block {
+  position: relative;
+  width: 700px;
+  display: block;
+  justify-self: center;
+  font-family: Inter;
+}
+
+.profile-header {
+  position: relative;
+  width: 100%;
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.profile-image {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 30px;
+  background-image: url('../images/profile.png');
+  background-size: 100px 100px;
+}
+
+.profile-data-block {
+  position: relative;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.profile-data-block .block-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profile-data-block .email {
+  margin-top: 10px;
+}
+
+.profile-data-block form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-form-inputs {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.profile-form-inputs .input-block {
+  position: relative;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-form-inputs .input-block label {
+  color: #636c84;
+}
+
+.profile-form-inputs .input-block input {
+  position: relative;
+  width: 100%;
+  height: 36px;
+  padding: 0px 8px;
+  font-size: 18px;
+  border: 2px solid #e1e1e6;
+  border-radius: 4px;
+  outline: none;
+}
+
+.profile-data-block form .form-button_submit {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #e1e1e6;
+  font-family: Inter;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.6s;
+}
+
+.profile-data-block form .form-button_submit:hover {
+  color: white;
+  background-color: #5a647d;
+}

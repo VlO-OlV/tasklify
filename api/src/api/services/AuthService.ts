@@ -71,4 +71,9 @@ export class AuthService {
       isVerified: true,
     });
   }
+
+  async getMe (userId: string) {
+    const { password, ...user } = await this.userRepository.find({ id: userId });
+    return user;
+  }
 }

@@ -1,8 +1,9 @@
-import { Body, Controller, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from '../services/AuthService';
 import { LocalGuard } from 'src/security/LocalGuard';
 import { RegistrationDTO } from '../dtos/RegistrationDTO';
 import { UserByIdPipe } from '../pipes/UserByIdPipe';
+import { JwtGuard } from 'src/security/JwtGuard';
 
 @Controller('/auth')
 export class AuthController {
@@ -31,5 +32,13 @@ export class AuthController {
     @Param('userId', UserByIdPipe) userId: string,
   ) {
     return this.authService.verifyEmail(userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('/me')
+  async getMe (
+    @Request() req,
+  ) {
+    return this.authService.getMe(req.user.id);
   }
 }

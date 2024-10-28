@@ -5,7 +5,7 @@ import { UserRepository } from '../database/repositories/UserRepository';
 export class UserService {
   
   constructor (
-    private userRepoitory: UserRepository,
+    private userRepository: UserRepository,
   ) {}
 
 }

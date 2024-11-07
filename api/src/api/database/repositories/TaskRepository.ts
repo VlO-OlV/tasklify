@@ -4,52 +4,49 @@ import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class TaskRepository {
-    
-    constructor (
-        private prisma: PrismaService
-    ) {}
+  
+  constructor (
+    private prisma: PrismaService
+  ) {}
 
-    async create (
-        data: Prisma.TaskUncheckedCreateInput
-    ) {
-        return this.prisma.task.create({
-            data,
-        });
-    }
+  private include = {
+    assignee: true,
+    list: true,
+  }
 
-    async deleteById (
-        id: string
-    ) {
-        return this.prisma.task.delete({
-            where: {
-                id: id,
-            },
-        });
-    }
+  async create (data: Prisma.TaskUncheckedCreateInput) {
+    return this.prisma.task.create({
+      data,
+    });
+  }
 
-    async updateById (
-        id: string,
-        data: Prisma.TaskUncheckedUpdateInput
-    ) {
-        return this.prisma.task.update({
-            where: {
-                id: id,
-            },
-            data,
-        });
-    }
+  async deleteById (id: string) {
+    return this.prisma.task.delete({
+      where: {
+        id: id,
+      },
+    });
+  }
 
-    async findById (
-        id: string
-    ) {
-        return this.prisma.task.findUnique({
-            where: {
-                id: id,
-            },
-        });
-    }
+  async updateById (id: string, data: Prisma.TaskUncheckedUpdateInput) {
+    return this.prisma.task.update({
+      where: {
+        id: id,
+      },
+      data,
+    });
+  }
 
-    async findAll () {
-        return this.prisma.task.findMany();
-    }
+  async findById (id: string) {
+    return this.prisma.task.findUnique({
+      where: {
+        id: id,
+      },
+      include: this.include,
+    });
+  }
+
+  async findAll () {
+    return this.prisma.task.findMany();
+  }
 }

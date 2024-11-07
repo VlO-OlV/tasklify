@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from "@nestjs/common";
 import { TaskRepository } from "../database/repositories/TaskRepository";
-import { InvalidEtityIdException } from "src/utils/exceptions/InvalidEntityIdException";
+import { InvalidEntityIdException } from "src/utils/exceptions/InvalidEntityIdException";
 
 @Injectable()
 export class TaskByIdPipe implements PipeTransform {
@@ -11,7 +11,7 @@ export class TaskByIdPipe implements PipeTransform {
     async transform(taskId: string) {
         const task = await this.taskRepository.findById(taskId);
         if (!task) {
-            throw new InvalidEtityIdException('Task');
+            throw new InvalidEntityIdException('Task');
         }
         return taskId;
     }

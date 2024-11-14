@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import '../../assets/styles/Modal.css';
 import { List } from '../types/List';
-import { CreateTask, Task } from '../types/Task';
+import { Task } from '../types/Task';
 import { Priority } from '../enums/PriorityEnum';
 import { useGetListByIdQuery } from '../store/api/endpoints/listsApi';
 import { useCreateTaskMutation, useUpdateTaskByIdMutation } from '../store/api/endpoints/tasksApi';
 import { useToastContext } from '../hooks/contexts/ToastContext';
 import getErrorMsg from '../utils/getErrorMsg';
 import getDateString from '../utils/getDateString';
-import { formatPriority } from '../utils/formatPriority';
+import { formatEnum } from '../utils/formatEnum';
 
 interface ModalProps {
     listId: string,
@@ -41,10 +41,6 @@ function Modal({
 
     const currentList: List = data as List;
 
-    if (fetchListError) {
-        showMessage(getErrorMsg(fetchListError));
-    }
-
     const [isVisibleDropdown, setIsVisibleDropdown] = useState(false);
 
     const [taskTitle, setTaskTitle] = useState(mode !== 3 ? taskData.name : null);
@@ -60,16 +56,14 @@ function Modal({
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (mode === 2) {
-            const updatedTask: Task = {
+            const updatedTask = {
                 id: taskData.id,
                 name: taskTitle as any,
                 description: taskDecription as any,
                 deadline: taskDeadline as any,
                 listId: listId,
                 priority: taskPriority as any,
-                createdAt: new Date(),
             };
-            console.log(taskTitle as any);
             await updateTask({...updatedTask})
                     .unwrap()
                     .then(() => {
@@ -80,13 +74,12 @@ function Modal({
                         showMessage(getErrorMsg(error));
                     });
         } else {
-            const newTask: CreateTask = {
+            const newTask = {
                 name: taskTitle as any,
                 description: taskDecription as any,
                 deadline: taskDeadline as any,
                 listId: listId,
                 priority: taskPriority as any,
-                createdAt: new Date(),
             };
             await createTask({...newTask})
                     .unwrap()
@@ -98,6 +91,11 @@ function Modal({
                         showMessage(getErrorMsg(error));
                     });
         }
+    }
+
+    if (fetchListError) {
+        showMessage(getErrorMsg(fetchListError));
+        return (<></>);
     }
 
     return (
@@ -124,7 +122,7 @@ function Modal({
                                 </div>
                                 <div className="info_block">
                                     <span className="priority_label">Priority</span>
-                                    <p>{formatPriority(taskData.priority)}</p>
+                                    <p>{formatEnum(taskData.priority)}</p>
                                 </div>
                             </div>
                             <div className="modal-body-description">
@@ -162,7 +160,7 @@ function Modal({
                                             <option value={Priority.EXTREME}>Extreme</option>
                                         </select>
                                         <div className="select_input">
-                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{formatPriority(taskPriority)}</button>
+                                            <button type="button" className={isVisibleDropdown ? "select_input_button select_input_button-active" : "select_input_button"} onClick={() => {setIsVisibleDropdown(!isVisibleDropdown)}}>{formatEnum(taskPriority)}</button>
                                             {
                                                 isVisibleDropdown ?
                                                     <div className="select_input_options">

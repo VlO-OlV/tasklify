@@ -4,12 +4,16 @@ import { CreateBoardDTO } from '../dtos/CreateBoardDTO';
 import { BoardUserRepository } from '../database/repositories/BoardUserRepository';
 import { BoardRole } from '@prisma/client';
 import { UpdateBoardDTO } from '../dtos/UpdateBoardDTO';
+import { ListRepository } from '../database/repositories/ListRepository';
+import { TaskRepository } from '../database/repositories/TaskRepository';
 
 @Injectable()
 export class BoardService {
   constructor (
     private boardRepository: BoardRepository,
     private boardUserRepository: BoardUserRepository,
+    private listRepository: ListRepository,
+    private taskRepository: TaskRepository,
   ) {}
 
   async create (userId: string, body: CreateBoardDTO) {
@@ -32,5 +36,17 @@ export class BoardService {
 
   async getById (boardId: string){
     return this.boardRepository.findById(boardId);
+  }
+
+  async getBoardLists (boardId: string) {
+    return this.listRepository.findAll({ boardId });
+  }
+
+  async getBoardTasks (boardId: string) {
+    return this.taskRepository.findAll({
+      list: {
+        boardId,
+      },
+    });
   }
 }

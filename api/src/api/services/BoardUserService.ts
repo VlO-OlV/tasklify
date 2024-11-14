@@ -10,7 +10,7 @@ export class BoardUserService {
   ) {}
 
   async getMy (userId: string) {
-    return this.boardUserRepository.find({ userId });
+    return this.boardUserRepository.findAll({ userId });
   }
 
   async create (body: CreateBoardUserDTO) {

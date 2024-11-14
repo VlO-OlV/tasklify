@@ -54,11 +54,4 @@ export class ListController {
     const list = await this.listService.getById(id);
     return list;
   }
-
-  @UseGuards(JwtGuard)
-  @Get()
-  async getAllLists () {
-    const lists = await this.listService.getAll();
-    return lists;
-  }
 }

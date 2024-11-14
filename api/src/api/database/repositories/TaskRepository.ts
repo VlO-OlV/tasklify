@@ -46,7 +46,7 @@ export class TaskRepository {
     });
   }
 
-  async findAll () {
-    return this.prisma.task.findMany();
+  async findAll (where: Prisma.TaskWhereInput) {
+    return this.prisma.task.findMany({ where });
   }
 }

@@ -32,4 +32,10 @@ export class BoardUserRepository {
       where,
     });
   }
+
+  async findById (id: string) {
+    return this.prisma.boardUser.findFirst({
+      where: { id },
+    });
+  }
 }

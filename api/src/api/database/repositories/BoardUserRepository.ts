@@ -27,8 +27,8 @@ export class BoardUserRepository {
     });
   }
 
-  async find (where: Prisma.BoardUserWhereInput) {
-    return this.prisma.boardUser.findFirst({
+  async findAll (where: Prisma.BoardUserWhereInput) {
+    return this.prisma.boardUser.findMany({
       where,
     });
   }

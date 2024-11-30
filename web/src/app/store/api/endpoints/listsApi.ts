@@ -3,17 +3,12 @@ import { baseApi } from "../baseApi";
 
 export const listsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getAllLists: builder.query<List[], void>({
-            query: () => ({
-                url: '/lists',
-            }),
-        }),
         getListById: builder.query<List, string>({
             query: (id) => ({
                 url: `/lists/${id}`,
             }),
         }),
-        createList: builder.mutation<List, Omit<List, 'id'>>({
+        createList: builder.mutation<List, Omit<List, 'id' | 'updatedAt' | 'createdAt'>>({
             query: ({...createData}) => ({
                 url: '/lists',
                 method: 'POST',
@@ -36,4 +31,4 @@ export const listsApi = baseApi.injectEndpoints({
     }),
 });
 
-export const { useGetAllListsQuery, useGetListByIdQuery, useCreateListMutation, useUpdateListByIdMutation, useDeleteListByIdMutation } = listsApi;
+export const { useGetListByIdQuery, useCreateListMutation, useUpdateListByIdMutation, useDeleteListByIdMutation } = listsApi;

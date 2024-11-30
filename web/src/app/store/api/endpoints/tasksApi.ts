@@ -1,19 +1,14 @@
-import { CreateTask, Task } from "../../../types/Task";
+import { Task } from "../../../types/Task";
 import { baseApi } from "../baseApi";
 
 export const tasksApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
-        getAllTasks: builder.query<Task[], void>({
-            query: () => ({
-                url: '/tasks',
-            }),
-        }),
         getTaskById: builder.query<Task, string>({
             query: (id) => ({
                 url: `/tasks/${id}`,
             }),
         }),
-        createTask: builder.mutation<Task, CreateTask>({
+        createTask: builder.mutation<Task, Omit<Task, 'id' | 'createdAt' | 'updatedAt'>>({
             query: ({...createData}) => ({
                 url: '/tasks',
                 method: 'POST',
@@ -36,4 +31,4 @@ export const tasksApi = baseApi.injectEndpoints({
     }),
 });
 
-export const { useGetAllTasksQuery, useGetTaskByIdQuery, useCreateTaskMutation, useUpdateTaskByIdMutation, useDeleteTaskByIdMutation } = tasksApi;
+export const { useGetTaskByIdQuery, useCreateTaskMutation, useUpdateTaskByIdMutation, useDeleteTaskByIdMutation } = tasksApi;

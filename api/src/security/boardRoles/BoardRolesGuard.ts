@@ -42,11 +42,11 @@ export class BoardRolesGuard implements CanActivate {
   }
 
   async checkUserRole (userId, boardId, boardRoles) {
-    const boardUser = await this.boardUserRepository.find({ userId, boardId });
-    if (!boardUser) {
+    const boardUsers = await this.boardUserRepository.findAll({ userId, boardId });
+    if (!boardUsers[0]) {
       throw new NoPermissionException();
     }
-    if (!boardRoles || boardRoles.some((boardRole) => boardRole === boardUser.userRole)) {
+    if (!boardRoles || boardRoles.some((boardRole) => boardRole === boardUsers[0].userRole)) {
       return true;
     }
     throw new NoPermissionException();

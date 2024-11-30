@@ -48,4 +48,20 @@ export class BoardController {
   ) {
     return this.boardService.deleteById(boardId);
   }
+
+  @UseGuards(JwtGuard, BoardRolesGuard)
+  @Get('/:boardId/lists')
+  async getBoardLists (
+    @Param('boardId', BoardByIdPipe) boardId: string,
+  ) {
+    return this.boardService.getBoardLists(boardId);
+  }
+
+  @UseGuards(JwtGuard, BoardRolesGuard)
+  @Get('/:boardId/tasks')
+  async getBoardTasks (
+    @Param('boardId', BoardByIdPipe) boardId: string,
+  ) {
+    return this.boardService.getBoardTasks(boardId);
+  }
 }

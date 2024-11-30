@@ -35,7 +35,7 @@ export class TaskController {
     return deletedTask;
   }
   
-  @BoardRoles(BoardRole.ADMIN, BoardRole.CONTRIBUTOR)
+  @BoardRoles(BoardRole.ADMIN, BoardRole.MODERATOR)
   @UseGuards(JwtGuard, BoardRolesGuard)
   @Patch('/:taskId')
   async updateTaskById (
@@ -53,12 +53,5 @@ export class TaskController {
   ) {
     const task = await this.taskService.getById(id);
     return task;
-  }
-
-  @UseGuards(JwtGuard, BoardRolesGuard)
-  @Get()
-  async getAllTasks () {
-    const tasks = await this.taskService.getAll();
-    return tasks;
   }
 }
